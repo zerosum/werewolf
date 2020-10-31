@@ -1,0 +1,14 @@
+### os specific
+Thumbs.db
+.DS_Store
+
+### idea
+.idea/
+*.iml
+out/
+
+### sbt
+target/
+
+### Build Server Protocol
+.bsp/
