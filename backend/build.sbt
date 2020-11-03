@@ -1,3 +1,5 @@
+name := "werewolf-backend"
+
 scalaVersion := "2.13.3"
 
 libraryDependencies ++= {

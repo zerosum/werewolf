@@ -6,9 +6,3 @@ Thumbs.db
 .idea/
 *.iml
 out/
-
-### sbt
-target/
-
-### Build Server Protocol
-.bsp/
