@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package werewolf.api;
+
+import "scalapb/scalapb.proto";
+
+option optimize_for = SPEED;
+option (scalapb.options) = {
+  scope: PACKAGE
+  enum_value_naming: CAMEL_CASE
+  package_name: "dev.zerosum.werewolf.proto";
+};
+
+service MatchingService {
+  rpc Establish (EstablishRequest) returns (EstablishResponse) {}
+}
+
+message EstablishRequest {
+}
+
+message EstablishResponse {
+  string id = 1;
+}
