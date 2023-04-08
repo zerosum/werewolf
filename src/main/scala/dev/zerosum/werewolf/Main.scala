@@ -1,16 +1,35 @@
 package dev.zerosum.werewolf
 
-import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ActorSystem, Behavior, Scheduler}
+import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
+import dev.zerosum.werewolf.adapter.actor.VillagesActor
+import dev.zerosum.werewolf.adapter.grpc.MatchingServiceImpl
 import dev.zerosum.werewolf.server.GrpcServer
+
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.DurationInt
 
 object Main {
 
   def main(args: Array[String]): Unit = {
-    val conf   = ConfigFactory.load()
-    val system = ActorSystem(Behaviors.empty[String], "werewolf", conf)
+    ActorSystem(guardian(), "werewolf", ConfigFactory.load())
+  }
 
-    new GrpcServer(system).run()
+  private def guardian(): Behavior[Any] = {
+    Behaviors.setup { ctx =>
+      implicit val system: ActorSystem[_] = ctx.system
+      implicit val ec: ExecutionContext   = system.executionContext
+      implicit val timeout: Timeout       = 3.second
+      implicit val scheduler: Scheduler   = system.scheduler
+
+      val villagesActorRef    = ctx.spawn(VillagesActor(), "villages")
+      val matchingServiceImpl = new MatchingServiceImpl(villagesActorRef)
+
+      GrpcServer.init(matchingServiceImpl)
+
+      Behaviors.same
+    }
   }
 }

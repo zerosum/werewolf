@@ -7,13 +7,12 @@ import dev.zerosum.werewolf.proto.{MatchingService, MatchingServiceHandler}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class GrpcServer(system: ActorSystem[_]) {
+object GrpcServer {
 
-  def run(): Future[Http.ServerBinding] = {
-    implicit val sys: ActorSystem[_]  = system
-    implicit val ec: ExecutionContext = sys.executionContext
-
-    val matchingService = MatchingServiceHandler.partial(new MatchingServiceImpl())
+  def init(
+      matchingService: MatchingService
+  )(implicit system: ActorSystem[_]): Future[Http.ServerBinding] = {
+    implicit val ec: ExecutionContext = system.executionContext
 
     val serverReflection = ServerReflection.partial(
       List(
@@ -23,7 +22,7 @@ class GrpcServer(system: ActorSystem[_]) {
 
     val serviceHandler = ServiceHandler.concatOrNotFound(
       serverReflection,
-      matchingService
+      MatchingServiceHandler.partial(matchingService)
     )
 
     val binding = Http()
@@ -31,7 +30,7 @@ class GrpcServer(system: ActorSystem[_]) {
       .bind(serviceHandler)
 
     binding.foreach { b =>
-      println(s"gRPC server bound to: ${b.localAddress}")
+      system.log.debug("gRPC server bound to: {}", b.localAddress)
     }
 
     binding
