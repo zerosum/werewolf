@@ -20,7 +20,7 @@ class MatchingServiceImpl(
       }
     } yield res match {
       case r: VillagesActor.EstablishSucceeded =>
-        EstablishResponse(r.villageId)
+        EstablishResponse(r.villageId.value)
     }
   }
 }

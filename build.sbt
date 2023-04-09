@@ -11,7 +11,8 @@ libraryDependencies ++= Seq(
   akka.http,
   akka.slf4j,
   scalapbRuntime,
-  logback
+  logback,
+  scalatest
 )
 
 mainClass := Some("dev.zerosum.werewolf.Main")

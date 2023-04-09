@@ -17,4 +17,6 @@ object Dependencies {
     "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
 
   val logback = "ch.qos.logback" % "logback-classic" % "1.2.11"
+
+  val scalatest = "org.scalatest" %% "scalatest" % "3.2.15" % "test"
 }
